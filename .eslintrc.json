@@ -1,37 +1,46 @@
 {
-    "env": {
-        "browser": true,
-        "es2021": true
-    },
-    "extends": [
-        "plugin:react/recommended",
-        "airbnb",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:prettier/recommended"
-    ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
-        "ecmaVersion": 12,
-        "sourceType": "module"
-    },
-    "plugins": [
-        "react",
-        "react-hooks",
-        "@typescript-eslint",
-        "prettier"
-    ],
-    "rules": {
-      "prettier/prettier": "error",
-      "no-use-before-define": "off",
-      "react/react-in-jsx-scope": "off",
-      "react-hooks/rules-of-hooks": "error",
-      "react-hooks/exhaustive-deps": "warn",
-      "@typescript-eslint/no-use-before-define": ["error"],
-      "react/jsx-filename-extension": [1, {"extensions": [".tsx"]}]
-    },
+  "env": {
+      "browser": true,
+      "es2021": true,
+      "jest": true
+  },
+  "extends": [
+      "plugin:@typescript-eslint/recommended",
+      "plugin:react/recommended",
+      "airbnb",
+      "prettier",
+      "plugin:prettier/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+      "ecmaFeatures": {
+          "jsx": true
+      },
+      "ecmaVersion": 12,
+      "sourceType": "module"
+  },
+  "plugins": [
+      "react",
+      "prettier",
+      "react-hooks",
+      "@typescript-eslint"
+  ],
+  "rules": {
+    "prettier/prettier": "error",
+    "react/jsx-props-no-spreading": "off",
+    "react/jsx-one-expression-per-line": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "import/no-duplicates": "off",
+    "react/prop-types": "off",
+    "no-multi-assign": "off",
+    "no-use-before-define":"off",
+    "no-unused-expressions": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "react/jsx-filename-extension": [1, { "extensions": [".tsx"] }],
+    "import/prefer-default-export": "off",
+    "camelcase": "off",
+    "@typescript-eslint/ban-types": "off",
     "import/extensions": [
       "error",
       "ignorePackages",
@@ -39,5 +48,11 @@
         "ts": "never",
         "tsx": "never"
       }
-    ]
+   ]
+  },
+  "settings": {
+    "import/resolver": {
+      "typescript": {}
+    }
+  }
 }
