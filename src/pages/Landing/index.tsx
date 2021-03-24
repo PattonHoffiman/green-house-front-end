@@ -5,7 +5,6 @@ import Logo from '../../components/Logo';
 import Background from '../../components/Background';
 import LargeButton from '../../components/LargeButton';
 import { Container, Content, ButtonArea } from './style';
-
 import backgroundImage from '../../assets/backgroundImageOne.jpg';
 
 const Landing: React.FC = () => (
