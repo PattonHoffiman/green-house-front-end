@@ -14,10 +14,10 @@ const Landing: React.FC = () => (
     <Content>
       <Logo />
       <ButtonArea>
-        <Link to="/signin">
+        <Link to="/signin" id="signin">
           <LargeButton>SignIn</LargeButton>
         </Link>
-        <Link to="/signup">
+        <Link to="/signup" id="signup">
           <LargeButton>SignUp</LargeButton>
         </Link>
       </ButtonArea>
