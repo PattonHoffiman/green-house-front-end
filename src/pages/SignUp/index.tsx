@@ -50,19 +50,22 @@ const SignUp: React.FC = () => {
           password,
         });
 
-        const { message } = response.data;
-        history.push('/signin');
-        addToast({ type: 'success', title: message });
+        const { message, status } = response.data;
+
+        if (status === 'success') {
+          history.push('/signin');
+          addToast({ type: status, title: message });
+        } else if (status === 'error') {
+          addToast({
+            type: 'error',
+            title: 'Error!',
+            description: message,
+          });
+        }
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
           formRef.current?.setErrors(errors);
-        } else {
-          addToast({
-            type: 'error',
-            title: 'Error in Authentication!',
-            description: 'This e-mail already exists! Try another',
-          });
         }
       }
     },
@@ -88,7 +91,6 @@ const SignUp: React.FC = () => {
               icon={FiLock}
               type="password"
               placeholder="Password..."
-              autoComplete="on"
             />
             <Button type="submit">Register</Button>
           </Form>

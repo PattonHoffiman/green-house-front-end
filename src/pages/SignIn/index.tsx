@@ -32,7 +32,7 @@ interface SignInFormData {
 const SignIn: React.FC = () => {
   const history = useHistory();
   const { addToast } = useToast();
-  const { signIn } = useAuth();
+  const { signIn, info } = useAuth();
   const formRef = useRef<FormHandles>(null);
 
   const handleSubmit = useCallback(
@@ -53,22 +53,24 @@ const SignIn: React.FC = () => {
           password: data.password,
         });
 
-        history.push('/dashboard');
-        addToast({ type: 'success', title: 'Welcome!' });
+        if (info.status === 'success') {
+          history.push('/dashboard');
+          addToast({ type: info.status, title: info.message });
+        } else if (info.status === 'error') {
+          addToast({
+            type: info.status,
+            title: 'Error!',
+            description: info.message,
+          });
+        }
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
           formRef.current?.setErrors(errors);
-        } else {
-          addToast({
-            type: 'error',
-            title: 'Error in Authentication!',
-            description: 'Incorrect e-mail/password combination.',
-          });
         }
       }
     },
-    [signIn, addToast, history],
+    [signIn, addToast, history, info],
   );
 
   return (
@@ -89,7 +91,6 @@ const SignIn: React.FC = () => {
               icon={FiLock}
               type="password"
               placeholder="Password..."
-              autoComplete="on"
             />
             <Button type="submit">Enter</Button>
           </Form>
