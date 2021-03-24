@@ -69,4 +69,23 @@ export const CenterContainer = styled.div`
     margin-top: 24px;
     margin-bottom: 36px;
   }
+
+  @media screen and (max-width: 600px) {
+    form {
+      width: 500px;
+
+      div {
+        height: 56px;
+        input {
+          font-size: 24px;
+        }
+      }
+
+      button {
+        width: 60%;
+        height: 56px;
+        font-size: 24px;
+      }
+    }
+  }
 `;

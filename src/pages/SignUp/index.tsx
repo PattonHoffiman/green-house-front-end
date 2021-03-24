@@ -53,13 +53,32 @@ const SignUp: React.FC = () => {
         const { message, status } = response.data;
 
         if (status === 'success') {
-          history.push('/signin');
-          addToast({ type: status, title: message });
+          addToast({ type: status, title: 'Success', description: message });
         } else if (status === 'error') {
           addToast({
-            type: 'error',
+            type: status,
             title: 'Error!',
             description: message,
+          });
+        }
+
+        const sendConfirmation = await api.post('users/confirm', {
+          email,
+        });
+
+        if (sendConfirmation.data.status === 'success') {
+          addToast({
+            title: 'Success',
+            type: sendConfirmation.data.status,
+            description: sendConfirmation.data.message,
+          });
+
+          history.push('/mail-notification');
+        } else if (sendConfirmation.data.status === 'error') {
+          addToast({
+            title: 'Error!',
+            type: sendConfirmation.data.status,
+            description: sendConfirmation.data.message,
           });
         }
       } catch (err) {
