@@ -45,6 +45,10 @@ export const RightContainer = styled.div`
       color: ${shade(0.2, '#336820')};
     }
   }
+
+  @media screen and (max-width: 600px) {
+    font-size: 24px;
+  }
 `;
 
 export const LeftContainer = styled.div`
@@ -89,5 +93,24 @@ export const CenterContainer = styled.div`
 
     margin-top: 24px;
     margin-bottom: 36px;
+  }
+
+  @media screen and (max-width: 600px) {
+    form {
+      width: 500px;
+
+      div {
+        height: 56px;
+        input {
+          font-size: 24px;
+        }
+      }
+
+      button {
+        width: 60%;
+        height: 56px;
+        font-size: 24px;
+      }
+    }
   }
 `;
