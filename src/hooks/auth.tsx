@@ -18,8 +18,14 @@ interface AuthState {
   token: string;
 }
 
+interface MessageState {
+  status: string;
+  message: string;
+}
+
 interface AuthContextData {
   user: User;
+  info: MessageState;
   signOut(): void;
   updateUser(user: User): void;
   signIn(credential: SignInCredentials): Promise<void>;
@@ -40,17 +46,29 @@ export const AuthProvider: React.FC = ({ children }) => {
     return {} as AuthState;
   });
 
+  const [info, setInfo] = useState<MessageState>(() => {
+    return {} as MessageState;
+  });
+
   const signIn = useCallback(async ({ email, password }) => {
     const response = await api.post('sessions', {
       email,
       password,
     });
 
-    const { token, user } = response.data;
+    const { status, message } = response.data;
 
-    localStorage.setItem('@GreenHouse:token', token);
-    localStorage.setItem('@GreenHouse:user', JSON.stringify(user));
-    api.defaults.headers.authorization = `Bearer ${token}`;
+    if (status === 'success') {
+      const { token, user } = response.data;
+      localStorage.setItem('@GreenHouse:token', token);
+      localStorage.setItem('@GreenHouse:user', JSON.stringify(user));
+      api.defaults.headers.authorization = `Bearer ${token}`;
+    }
+
+    setInfo({
+      status,
+      message,
+    });
   }, []);
 
   const signOut = useCallback(() => {
@@ -73,7 +91,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user: data.user, signIn, signOut, updateUser }}
+      value={{ info, user: data.user, signIn, signOut, updateUser }}
     >
       {children}
     </AuthContext.Provider>
