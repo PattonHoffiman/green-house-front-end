@@ -56,13 +56,17 @@ export const AuthProvider: React.FC = ({ children }) => {
       password,
     });
 
-    const { status, message } = response.data;
+    const { status, message, token, user } = response.data;
 
     if (status === 'success') {
-      const { token, user } = response.data;
       localStorage.setItem('@GreenHouse:token', token);
       localStorage.setItem('@GreenHouse:user', JSON.stringify(user));
       api.defaults.headers.authorization = `Bearer ${token}`;
+
+      setData({
+        user,
+        token,
+      });
     }
 
     setInfo({
