@@ -205,7 +205,9 @@ const Profile: React.FC = () => {
               Next Time to Water: <strong>{waterTimes.water_next_time}</strong>
             </h2>
             {waterTimes.water_last_time !== 'None' && (
-              <h2>Last Time Watered: {waterTimes.water_last_time}</h2>
+              <h2>
+                Last Time Watered: <strong>{waterTimes.water_last_time}</strong>
+              </h2>
             )}
           </div>
         </CenterContainer>
