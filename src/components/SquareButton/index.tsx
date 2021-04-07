@@ -6,9 +6,14 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon: React.ComponentType<IconBaseProps>;
 }
 
-const SquareButton: React.FC<ButtonProps> = ({ icon: Icon, ...rest }) => (
+const SquareButton: React.FC<ButtonProps> = ({
+  icon: Icon,
+  children,
+  ...rest
+}) => (
   <Container type="button" {...rest}>
     {Icon && <Icon size={48} />}
+    {children}
   </Container>
 );
 

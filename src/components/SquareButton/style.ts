@@ -14,4 +14,21 @@ export const Container = styled.button`
     margin-top: 8px;
     cursor: pointer;
   }
+
+  .notification {
+    top: 45px;
+    right: 100px;
+    font-size: 16px;
+    border-radius: 50%;
+    position: absolute;
+
+    padding: 5px 10px;
+
+    color: #f8f8f4;
+    background: #336820;
+
+    @media screen and (max-width: 800px) {
+      right: 155px;
+    }
+  }
 `;
