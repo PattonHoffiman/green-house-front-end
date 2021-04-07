@@ -1,5 +1,17 @@
 import { shade } from 'polished';
-import styled from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
+
+interface NotificationProps {
+  isClicked: boolean;
+}
+
+export const appear = keyframes`
+  from {
+    opacity: 0;
+  } to {
+    opacity: 1;
+  }
+`;
 
 export const Container = styled.main`
   height: 100vh;
@@ -84,6 +96,38 @@ export const UserContent = styled.div`
   }
 `;
 
+export const NotificationContainer = styled.div<NotificationProps>`
+  display: flex;
+  position: absolute;
+  align-items: center;
+  flex-direction: column;
+
+  right: 0;
+  top: 100px;
+
+  width: 300px;
+  height: auto;
+  max-height: 300px;
+  margin-right: 8px;
+  border-radius: 10px;
+  border: 1px solid #336820;
+
+  div:first-child {
+    border-radius: 8px 8px 0px 0px;
+  }
+
+  div:last-child {
+    border: none;
+    border-radius: 0px 0px 8px 8px;
+  }
+
+  ${props =>
+    props.isClicked &&
+    css`
+      animation: ${appear} 1s;
+    `}
+`;
+
 export const CenterContent = styled.div`
   display: flex;
   align-items: center;
@@ -95,8 +139,7 @@ export const CenterContent = styled.div`
     margin-top: 160px;
     text-align: center;
   }
-
-  margin-top: 40px;
+  align-items: center;
 
   overflow-y: auto;
   overflow-x: hidden;
