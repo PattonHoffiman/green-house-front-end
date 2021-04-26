@@ -1,7 +1,7 @@
 [[redirects]]
 from = "/confirm-email"
 to = "/.netlify/functions/feed-builder?tolkien=:tolkien"
-status 200
+status = 200
 
 [[redirects]]
 from = "/reset-password"
