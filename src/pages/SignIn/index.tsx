@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
 import * as Yup from 'yup';
@@ -34,10 +34,14 @@ const SignIn: React.FC = () => {
   const { addToast } = useToast();
   const { signIn, info } = useAuth();
   const formRef = useRef<FormHandles>(null);
+  const [loading, setLoading] = useState(false);
+  const [disable, setDisable] = useState(false);
 
   const handleSubmit = useCallback(
     async (data: SignInFormData) => {
       try {
+        setDisable(true);
+        setLoading(true);
         formRef.current?.setErrors({});
         const schema = Yup.object().shape({
           email: Yup.string()
@@ -68,9 +72,12 @@ const SignIn: React.FC = () => {
           const errors = getValidationErrors(err);
           formRef.current?.setErrors(errors);
         }
+      } finally {
+        setLoading(false);
+        setDisable(false);
       }
     },
-    [signIn, addToast, history, info],
+    [signIn, addToast, history, info, setLoading, setDisable],
   );
 
   return (
@@ -92,7 +99,9 @@ const SignIn: React.FC = () => {
               type="password"
               placeholder="Password..."
             />
-            <Button type="submit">Enter</Button>
+            <Button type="submit" loading={loading} disable={disable}>
+              Enter
+            </Button>
           </Form>
         </CenterContainer>
         <RightContainer>

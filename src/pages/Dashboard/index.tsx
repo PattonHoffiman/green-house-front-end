@@ -4,8 +4,9 @@ import { FiPlus, FiBell, FiPower } from 'react-icons/fi';
 
 import Logo from '../../components/Logo';
 import Card from '../../components/Card';
+import Loader from '../../components/Loader';
 import SquareButton from '../../components/SquareButton';
-import NotificationItem from '../../components/NotificationItem';
+import NotificationContainer from '../../components/NotificationContainer';
 
 import api from '../../services/api';
 import { useAuth } from '../../hooks/auth';
@@ -21,7 +22,6 @@ import {
   UserContainer,
   LogoContainer,
   CenterContent,
-  NotificationContainer,
 } from './style';
 
 interface Plant {
@@ -39,9 +39,12 @@ interface Notification {
 const Dashboard: React.FC = () => {
   const { user, signOut } = useAuth();
   const [show, setShow] = useState(false);
-  const [load, setLoad] = useState(false);
   const [click, setClick] = useState(false);
+  const [loadToken, setLoadToken] = useState(false);
   const [plants, setPlants] = useState<Plant[]>([]);
+  const [loadPlants, setLoadPlants] = useState(false);
+  const [emptyPlants, setEmptyPlants] = useState(false);
+  const [loadNotifications, setLoadNotifications] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   function removeNotification(id: string): void {
@@ -54,6 +57,7 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     async function verifyToken(): Promise<void> {
+      setLoadToken(true);
       const response = await api.put('users/profile', {
         name: user.name,
         email: user.email,
@@ -65,94 +69,98 @@ const Dashboard: React.FC = () => {
     }
 
     verifyToken();
-  }, [user, signOut]);
 
-  useEffect(() => {
-    async function getPlants(): Promise<void> {
-      try {
-        setLoad(true);
-        const response = await api.get('/plants');
-        const plantsList = response.data as Plant[];
-
-        if (plantsList) setPlants(plantsList);
-      } finally {
-        setLoad(false);
-      }
-    }
-
-    getPlants();
-  }, [setPlants]);
+    setTimeout(() => {
+      setLoadToken(false);
+    }, 500);
+  }, [user, signOut, setLoadToken]);
 
   useEffect(() => {
     async function getNotifications(): Promise<void> {
-      try {
-        setLoad(true);
-        const response = await api.get('/plants/notifications');
-        const notificationsList = response.data as Notification[];
+      setLoadNotifications(true);
+      const response = await api.get('/plants/notifications');
+      const notificationsList = response.data as Notification[];
 
-        if (notificationsList) setNotifications(notificationsList);
-      } finally {
-        setLoad(false);
-      }
+      if (notificationsList) setNotifications(notificationsList);
     }
 
     getNotifications();
-  }, [setNotifications]);
+
+    setTimeout(() => {
+      setLoadNotifications(false);
+    }, 500);
+  }, [setNotifications, setLoadNotifications]);
+
+  useEffect(() => {
+    async function getPlants(): Promise<void> {
+      setLoadPlants(true);
+      const response = await api.get('/plants');
+      const plantsList = response.data as Plant[];
+
+      if (plantsList) {
+        setPlants(plantsList);
+      }
+
+      if (plants.length === 0) setEmptyPlants(true);
+      else setEmptyPlants(false);
+    }
+
+    getPlants();
+
+    setTimeout(() => {
+      setLoadPlants(false);
+    }, 500);
+  }, [setPlants, plants.length, setLoadPlants, setEmptyPlants]);
 
   return (
     <Container>
-      <Content>
-        <TopContent>
-          <LogoContainer>
-            <Logo />
-          </LogoContainer>
-          <UserContainer>
-            <img
-              src={user.avatar_url ? user.avatar_url : genericUser}
-              alt={user.name}
-            />
-            <UserContent>
-              <h2>Welcome,</h2>
-              <Link to="/profile">{user.name}</Link>
-            </UserContent>
-          </UserContainer>
-          <Link to="/add-plant">
-            <SquareButton icon={FiPlus} title="Add New Plant" />
-          </Link>
-          <SquareButton
-            icon={FiBell}
-            title="Notifications"
-            onClick={() => {
-              if (notifications.length !== 0) {
-                setShow(!show);
-                setClick(!click);
-              }
-            }}
-          >
-            {notifications.length > 0 && !show && (
-              <span className="notification">{notifications.length}</span>
-            )}
-          </SquareButton>
-          <SquareButton icon={FiPower} onClick={signOut} title="SignOut" />
-        </TopContent>
-        {show && (
-          <NotificationContainer isClicked={click}>
-            {notifications.map(notification => (
-              <NotificationItem
-                id={notification.id}
-                key={notification.id}
-                remove={removeNotification}
-                content={notification.content}
+      {loadToken || loadPlants || loadNotifications ? (
+        <Loader />
+      ) : (
+        <Content>
+          <TopContent>
+            <LogoContainer>
+              <Logo />
+            </LogoContainer>
+            <UserContainer>
+              <img
+                src={user.avatar_url ? user.avatar_url : genericUser}
+                alt={user.name}
               />
-            ))}
-          </NotificationContainer>
-        )}
-        <CenterContent>
-          {load ? (
-            <h2>Loading...</h2>
-          ) : (
+              <UserContent>
+                <h2>Welcome,</h2>
+                <Link to="/profile">{user.name}</Link>
+              </UserContent>
+            </UserContainer>
+            <Link to="/add-plant">
+              <SquareButton icon={FiPlus} title="Add New Plant" />
+            </Link>
+            <SquareButton
+              icon={FiBell}
+              title="Notifications"
+              onClick={() => {
+                if (notifications.length !== 0) {
+                  setShow(!show);
+                  setClick(!click);
+                }
+              }}
+            >
+              {notifications.length > 0 && !show && (
+                <span className="notification">{notifications.length}</span>
+              )}
+            </SquareButton>
+            <SquareButton icon={FiPower} onClick={signOut} title="SignOut" />
+          </TopContent>
+          {show && (
+            <NotificationContainer
+              isClicked={click}
+              remove={removeNotification}
+              notifications={notifications}
+            />
+          )}
+          <CenterContent>
             <div>
-              {plants.length === 0 ? (
+              {emptyPlants ? (
                 <h2>You does not add any plant!</h2>
               ) : (
                 plants.map(plant => (
@@ -167,9 +175,9 @@ const Dashboard: React.FC = () => {
                 ))
               )}
             </div>
-          )}
-        </CenterContent>
-      </Content>
+          </CenterContent>
+        </Content>
+      )}
     </Container>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
 import * as Yup from 'yup';
@@ -27,10 +27,14 @@ const AddPlant: React.FC = () => {
   const history = useHistory();
   const { addToast } = useToast();
   const formRef = useRef<FormHandles>(null);
+  const [loading, setLoading] = useState(false);
+  const [disable, setDisable] = useState(false);
 
   const handleSubmit = useCallback(
     async (data: CreateFormData) => {
       try {
+        setDisable(true);
+        setLoading(true);
         formRef.current?.setErrors({});
         const schema = Yup.object().shape({
           name: Yup.string().required("Please, insert the plant's name."),
@@ -64,6 +68,9 @@ const AddPlant: React.FC = () => {
           const errors = getValidationErrors(err);
           formRef.current?.setErrors(errors);
         }
+      } finally {
+        setLoading(false);
+        setDisable(false);
       }
     },
     [addToast, history],
@@ -88,7 +95,9 @@ const AddPlant: React.FC = () => {
               name="days_to_water"
               placeholder="Days to Water..."
             />
-            <Button type="submit">Add</Button>
+            <Button type="submit" loading={loading} disable={disable}>
+              Add
+            </Button>
           </Form>
         </CenterContainer>
       </Content>

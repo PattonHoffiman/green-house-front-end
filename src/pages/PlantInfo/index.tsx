@@ -1,10 +1,11 @@
 import React, {
-  useCallback,
   useRef,
-  ChangeEvent,
   useState,
   useEffect,
+  ChangeEvent,
+  useCallback,
 } from 'react';
+
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
 import * as Yup from 'yup';
@@ -61,6 +62,8 @@ const Profile: React.FC = () => {
   const location = useLocation();
   const { addToast } = useToast();
   const formRef = useRef<FormHandles>(null);
+  const [loading, setLoading] = useState(false);
+  const [disable, setDisable] = useState(false);
   const [plant, setPlant] = useState<Plant>({} as Plant);
   const [waterTimes, setWaterTimes] = useState<WaterTimes>({} as WaterTimes);
 
@@ -84,6 +87,8 @@ const Profile: React.FC = () => {
   const handleSubmit = useCallback(
     async (data: PlantInfoFormData) => {
       try {
+        setDisable(true);
+        setLoading(true);
         formRef.current?.setErrors({});
         const schema = Yup.object().shape({
           name: Yup.string().required("Please, insert plant's name."),
@@ -113,9 +118,12 @@ const Profile: React.FC = () => {
           const errors = getValidationErrors(err);
           formRef.current?.setErrors(errors);
         }
+      } finally {
+        setLoading(false);
+        setDisable(false);
       }
     },
-    [setPlant, addToast, plant, history],
+    [setPlant, addToast, plant, history, setLoading, setDisable],
   );
 
   const handleAvatarChange = useCallback(
@@ -198,7 +206,9 @@ const Profile: React.FC = () => {
               name="days_to_water"
               placeholder="Days to Water..."
             />
-            <Button type="submit">Update</Button>
+            <Button type="submit" loading={loading} disable={disable}>
+              Update
+            </Button>
           </Form>
           <div>
             <h2>

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 
 import * as Yup from 'yup';
@@ -28,10 +28,14 @@ const ResetPassword: React.FC = () => {
   const location = useLocation();
   const { addToast } = useToast();
   const formRef = useRef<FormHandles>(null);
+  const [loading, setLoading] = useState(false);
+  const [disable, setDisable] = useState(false);
 
   const handleSubmit = useCallback(
     async (data: ResetPasswordFormData) => {
       try {
+        setDisable(true);
+        setLoading(true);
         formRef.current?.setErrors({});
         const schema = Yup.object().shape({
           password: Yup.string().required('Please, insert your password.'),
@@ -72,6 +76,9 @@ const ResetPassword: React.FC = () => {
           const errors = getValidationErrors(err);
           formRef.current?.setErrors(errors);
         }
+      } finally {
+        setLoading(false);
+        setDisable(false);
       }
     },
     [addToast, history, location],
@@ -102,7 +109,9 @@ const ResetPassword: React.FC = () => {
               icon={FiCheck}
               placeholder="Password Confirmation..."
             />
-            <Button type="submit">Reset</Button>
+            <Button type="submit" loading={loading} disable={disable}>
+              Reset
+            </Button>
           </Form>
         </CenterContainer>
       </Content>

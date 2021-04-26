@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, ChangeEvent } from 'react';
+import React, { useCallback, useRef, ChangeEvent, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
 import * as Yup from 'yup';
@@ -42,12 +42,16 @@ interface ProfileFormData {
 const Profile: React.FC = () => {
   const history = useHistory();
   const { addToast } = useToast();
-  const { updateUser, signOut, user } = useAuth();
   const formRef = useRef<FormHandles>(null);
+  const [loading, setLoading] = useState(false);
+  const [disable, setDisable] = useState(false);
+  const { updateUser, signOut, user } = useAuth();
 
   const handleSubmit = useCallback(
     async (data: ProfileFormData) => {
       try {
+        setDisable(true);
+        setLoading(true);
         formRef.current?.setErrors({});
         const schema = Yup.object().shape({
           name: Yup.string().required('Please, insert your name.'),
@@ -76,6 +80,9 @@ const Profile: React.FC = () => {
           const errors = getValidationErrors(err);
           formRef.current?.setErrors(errors);
         }
+      } finally {
+        setLoading(false);
+        setDisable(false);
       }
     },
     [updateUser, addToast],
@@ -157,7 +164,9 @@ const Profile: React.FC = () => {
             </AvatarInput>
             <Input name="name" icon={FiUser} placeholder="Name..." />
             <Input name="email" icon={FiMail} placeholder="E-mail..." />
-            <Button type="submit">Update</Button>
+            <Button type="submit" loading={loading} disable={disable}>
+              Update
+            </Button>
             <Link to="/change-password">
               <Button type="button">Change Password</Button>
             </Link>

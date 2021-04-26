@@ -27,10 +27,12 @@ const ForgotPassword: React.FC = () => {
   const { addToast } = useToast();
   const formRef = useRef<FormHandles>(null);
   const [loading, setLoading] = useState(false);
+  const [disable, setDisable] = useState(false);
 
   const handleSubmit = useCallback(
     async (data: SendMailFormData) => {
       try {
+        setDisable(true);
         setLoading(true);
         formRef.current?.setErrors({});
         const schema = Yup.object().shape({
@@ -65,9 +67,10 @@ const ForgotPassword: React.FC = () => {
         }
       } finally {
         setLoading(false);
+        setDisable(false);
       }
     },
-    [addToast, history],
+    [addToast, history, setLoading, setDisable],
   );
 
   return (
@@ -84,7 +87,7 @@ const ForgotPassword: React.FC = () => {
           <Form ref={formRef} onSubmit={handleSubmit}>
             <h1>Please, insert your e-mail</h1>
             <Input name="email" icon={FiMail} placeholder="E-mail..." />
-            <Button type="submit" loading={loading}>
+            <Button type="submit" loading={loading} disable={disable}>
               Send
             </Button>
           </Form>
