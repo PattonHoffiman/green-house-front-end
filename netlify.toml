@@ -1,9 +1,0 @@
-[[redirects]]
-from = "/confirm-email"
-to = "/.netlify/functions/feed-builder?token=:token"
-status = 200
-
-[[redirects]]
-from = "/reset-password"
-to = "/.netlify/functions/feed-builder?token=:token"
-status = 200
